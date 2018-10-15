@@ -85,6 +85,7 @@ public class BoardGameClient
 		 * 
 		 * */
 
+//<<<<<<< HEAD
 /*
 //theorectical 
 		public boolean diceReady = false;//this boolean is to ensure that the dice can only be rolled in a game, and only once per round
@@ -166,4 +167,6 @@ public class BoardGameClient
 
 */
 
-//AAHAHAWRGOERHJGPFDG1
+//AAHAHAWRGOERHJGPFDG11
+//=======
+//>>>>>>> branch 'master' of https://github.com/ChristofferZorn01/Group_03_Client.git
