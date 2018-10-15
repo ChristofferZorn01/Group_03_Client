@@ -13,6 +13,17 @@ public class BoardGameClient
 	public static void main(String[] args) 
 	{
 		
+		boolean diceReady = false;//this boolean is to ensure that the dice can only be rolled in a game, and only once per round
+		//NOTE: This boolean must be updated by the Server after each round.
+		
+		boolean winCondition = false;//THIS is updated by Server *Only* if this client is the winner
+		
+		boolean gameEnd = false;//The is updated by the Server when the game ends, in all clients
+		
+		int playerScore = 0;//this will be updated through messages from the server after each round
+		
+		//public int playerNumber = [Recieve from Server];//When we connect to the server, we will receive a message telling this variable what it is.
+		
 		//In case the user needs to input, the scanner is declared 
 		Scanner input = new Scanner(System.in);	
 		//This boolean makes sure the communication between the client and server only
@@ -51,10 +62,22 @@ public class BoardGameClient
 				  osToServer.flush();
 				  
 				  //Get updated score from server
-				  double clientScore = isFromServer.readInt();
+				  double clientScore = isFromServer.readInt();//Jens: I think this should be an int, not a double. Also, I think the variable should be made in the top, not here. I have it as playerScore. 
 				  
 				  //print out score
 				  System.out.println("Your new score is: " + clientScore);
+				  
+				  //This part of the code is for when any player wins a game. NOTE: The 2 booleans (gameEnd & winCondition) is supposed to change from the server. gameEnd affects all players, and winCondition affects only the winner
+				  if (gameEnd == true && winCondition == false)//If the game ends, and you are not the winner
+					{
+						System.out.println("Game Over. Sorry, you did not win.");//we tell that the game is over, and the player did not win
+						//gameResetQuestion();//We run the part that ask if player wants a new game.
+					}
+					else if (gameEnd == true && winCondition == true)//If the game ends, and you are not the winner
+					{
+						System.out.println("Game Over. Congratulations, you won!");//we tell that the game is over, and the player won
+						//gameResetQuestion();//We run the part that ask if player wants a new game.
+					}
 			 
 			  }  input.close();
 				connectToServer.close();
@@ -144,6 +167,7 @@ public class BoardGameClient
 			gameResetQuestion();//We run the part that ask if player wants a new game.
 		}
 		
+		NOT IMPORTANT; USE DICEROLLING CLASS MADE ELSEWHERE
 		public void diceRoll()//All the dice rolling action
 		{
 			roll = int(((Random(1, diceSize*100))%diceSize)+1);//We roll the die here
