@@ -80,7 +80,7 @@ public class BoardGameClient
 		 * IF N, end game.
 		 * 
 		 * 
-		 * 
+		 * What else?
 		 * 
 		 * 
 		 * */
