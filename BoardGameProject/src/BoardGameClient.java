@@ -51,11 +51,19 @@ public class BoardGameClient
 				  }
 				  
 				  //The client rolls the dice by using the dice class and receives a random number
+				  //NOTE: This should be inside an 'if' Statement controlled by the 'diceReady' boolean, to ensure that the dice can only be rolled once per turn. The boolean is reactivated by a signal from the server after each turn is finshed.
 				  System.out.print("Please roll the dice (until now just enter 2)");
 				  int diceRoll = input.nextInt(); 
 				  
+				  //Tell the user what the roll was
+				  System.out.print("You rolled: " + diceRoll);
+				  
 				  //Send the diceroll to the server
 				  osToServer.writeInt(diceRoll);
+				  
+				  //Lock the dice until next round
+				  diceReady = false;//NOTE: This boolean must be accessed by the Server to turn true, and start the next round.
+				  //And here the 'if' statement with the rolling dice part of the game should be closed off
 				  
 				 //flushes all the streams of data and executes them completely 
 				  //and gives a new space to new streams 
@@ -63,21 +71,25 @@ public class BoardGameClient
 				  
 				  //Get updated score from server
 				  double clientScore = isFromServer.readInt();//Jens: I think this should be an int, not a double. Also, I think the variable should be made in the top, not here. I have it as playerScore. 
+				  //int clientScore = isFromServer.readInt();//Like this.
 				  
 				  //print out score
 				  System.out.println("Your new score is: " + clientScore);
 				  
+				  //GAME END CODE START
 				  //This part of the code is for when any player wins a game. NOTE: The 2 booleans (gameEnd & winCondition) is supposed to change from the server. gameEnd affects all players, and winCondition affects only the winner
-				  if (gameEnd == true && winCondition == false)//If the game ends, and you are not the winner
+				  //NOTE: When the 2 booleans are sent from the Server, send the "winCondition" first, to esure that the messages don't get mixed up.
+				  if (gameEnd == true && winCondition == true)//If the game ends, and you are not the winner
+					{
+					  System.out.println("Game Over. Congratulations, you won!");//we tell that the game is over, and the player won
+						//gameResetQuestion();//We run the part that ask if player wants a new game.
+					}
+					else if (gameEnd == true && winCondition == false)//If the game ends, and you are not the winner
 					{
 						System.out.println("Game Over. Sorry, you did not win.");//we tell that the game is over, and the player did not win
 						//gameResetQuestion();//We run the part that ask if player wants a new game.
 					}
-					else if (gameEnd == true && winCondition == true)//If the game ends, and you are not the winner
-					{
-						System.out.println("Game Over. Congratulations, you won!");//we tell that the game is over, and the player won
-						//gameResetQuestion();//We run the part that ask if player wants a new game.
-					}
+				  //GAME END CODE END
 			 
 			  }  input.close();
 				connectToServer.close();
