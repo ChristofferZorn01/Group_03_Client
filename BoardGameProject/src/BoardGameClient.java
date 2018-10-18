@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class BoardGameClient 
 {
-  
+ static int playerName; 
 	public static void main(String[] args) 
 	{
 		
@@ -38,6 +38,9 @@ public class BoardGameClient
 			  // Create an input stream to receive data from the server
 			  DataInputStream isFromServer = new DataInputStream(connectToServer.getInputStream());
 			  
+			  playerName = isFromServer.readInt();
+			  System.out.println("You are player number " + playerName);
+			  
 			// Create an output stream to send data to the server
 			  DataOutputStream osToServer = new DataOutputStream(connectToServer.getOutputStream());
 			  
@@ -47,9 +50,10 @@ public class BoardGameClient
 				  System.out.print("Welcome to this awesome board game - type: 'yes' to start and 'no' to exit");
 				  if (input.next().equals("no")) {	
 					  System.out.print("You have exited the game");	
-					  break;	
+					  connect = false;	
 				  }
 				  
+				 
 				  //The client rolls the dice by using the dice class and receives a random number
 				  //NOTE: This should be inside an 'if' Statement controlled by the 'diceReady' boolean, to ensure that the dice can only be rolled once per turn. The boolean is reactivated by a signal from the server after each turn is finshed.
 				  System.out.print("Please roll the dice (until now just enter 2)");
