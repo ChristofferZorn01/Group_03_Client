@@ -111,8 +111,6 @@
 			}
 		}
 	}
-					
-				  // TODO Auto-generated method stub
 			
 			/*THE CLIENT HAS TO:
 			 * -CONNECT TO THE SERVER
