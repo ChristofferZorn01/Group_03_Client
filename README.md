@@ -1,4 +1,4 @@
-# Group_03_Server
+# Group_03_Client
 
 Aalborg University Medialogy Group 3 Semester 3 2018 <br /> Dice Racing Digital Board Game Server, Version 1
 
