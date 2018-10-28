@@ -6,6 +6,7 @@ Aalborg University Medialogy Group 3 Semester 3 2018 <br /> Dice Racing Digital 
 
 Welcome to the 2018 Medialogy 3 Group 3 Dice Racing Digital Board game! <br />
 Built in Java for the AAU Medialogy Programming MiniProject.
+This game is run in the consol of the environment of which the files are opened.
 
 ------
 
@@ -16,7 +17,7 @@ The rules are simple:
 1: All players Start with 0 points. It is not possible to get less.
 
 2: All players roll a die each round and the size of the die changes based on the number of players.
-	Example: there is 4 players, so the dice the players roll has 5 sides, from 1-5 (#Specify when we're done)
+	Example: There are 4 players, so the dice the players roll has numberOfPlayers*2 sides = 8.
 	
 3: Whoever rolls the highest number, gets 1 one point.
 	Example: Player 3 rolls the only 5, so he gets 1 point.
@@ -24,35 +25,30 @@ The rules are simple:
 4: If 2 or more players rolls highest, they all lose 1 point.
 	Example: Player 2 and Player 4 both roll highest with 4's, so they both loose 1 point.
 	
-5: The player who reach 10 points first wins the game. 
+5: The player who reaches the score to win first, wins the game. (That score can be changed in the VariableClass)
 
 ------
 
 Installation guide:
 
-0: Download (name of file / repository) and save to a directory of your choice.
+0: Download (name of file / repository) from botht the Client and Server repository, and save to a directory of your choice.
 
-1: Run "MainServer".
+1: Run the file "MainServer".
 
-2: Each Player run "BoardGameClient".
+2: Run the file "Lobby".
 
-3: Players Connect to the Server Lobby.
+3: Each Player have to run the file "BoardGameClient".
 
-4: When the Server Lobby is full, the game starts.
+4: Players Connect to the Server Lobby.
 
-5: Players Will be told to roll the die by pressing "R".
+5: When the Server Lobby is full ( 4 players ), the game starts.
 
-6: Follow the rules and play the game.
+6: Players will be told to roll the die by pressing 'r'.
 
-------
-##Below should be in the wiki if anything
+7: The game will then roll the dice and tell the players the outcome of the roll and which player gets a point.
 
-6: When Players have rolled, the result is sent to the server and the player can not roll again until next round.
-
-7: When the server has recieved a result from each player, the Server will compare the results and assign scores. Afterwards, the 	players will recieve signal that the next round has begun, and that they can roll again.
-
-8: 5-7 will repeat until a player reaches the max score (10 points) in the game, where the Server will tell all Players that the game is over, and tell the winning player that they won
+8: 6-7 will repeat until a player reaches the max score in the game, where the Server will tell all Players that the game is over, and tell the winning player that they won.
 
 ---
 
-Last updated 26/10/2018
+Last updated 28/10/2018
