@@ -1,114 +1,121 @@
-	
-	/*import java.io.DataInputStream;
-	import java.io.DataOutputStream;
-	import java.io.IOException;
-	import java.net.Socket;
-	import java.util.Scanner;*/
-	import java.io.*;
-	import java.net.Socket;
-	import java.util.Scanner;
-	
-	public class BoardGameClient {
-		
-		static int playerName; // Initialize variable to assign to joining players
 
-		// Game message strings to inform the players
-		public static String GAME_OVER_WON = "Game Over! Congratulations, you won! "; 
-		public static String GAME_OVER_LOSE = "Game Over! You lost! :( ";
-		public static String WELCOME_MESSAGE = "Welcome to this awesome board game - type: 'yes' to start and 'no' to exit ";
-		public static String EXIT_GAME = "You have exited the game ";
-		public static String ROLL_DICE = "\"Please roll the dice (until now just enter 2)\"";
-		
-		public static void main(String[] args) {
-			
-			boolean diceReady = false;//this boolean is to ensure that the dice can only be rolled in a game, and only once per round
-			//NOTE: This boolean must be updated by the Server after each round.
-			
-			boolean winCondition = false;//THIS is updated by Server *Only* if this client is the winner
-			
-			boolean gameEnd = false;//The is updated by the Server when the game ends, in all clients
-			
-			int playerScore = 0;//this will be updated through messages from the server after each round
-			
-			//public int playerNumber = [Recieve from Server];//When we connect to the server, we will receive a message telling this variable what it is.
-			
-			//In case the user needs to input, the scanner is declared 
-			Scanner input = new Scanner(System.in);	
-			//This boolean makes sure the communication between the client and server only
-			//takes place when actually connected
-			boolean connect = true;
-	
-			try {
-				 
-				// Create a socket to connect to the server
-				Socket connectToServer = new Socket("localhost", 7845);
-				  
-				// Create an input stream to receive data from the server
-				DataInputStream isFromServer = new DataInputStream(connectToServer.getInputStream());
-				  
-				playerName = isFromServer.readInt();
-				System.out.println("You are player number " + playerName);
-				  
-				// Create an output stream to send data to the server
-				DataOutputStream osToServer = new DataOutputStream(connectToServer.getOutputStream());
-				  
-				while (connect) {
-					  
-					// Ask the client if it is ready
-					System.out.print(WELCOME_MESSAGE);
-					
-					if (input.next().equals("no")) {	
-						System.out.print(EXIT_GAME);	
-						connect = false;	
-					}
-				
-					// The client rolls the dice by using the dice class and receives a random number
-					// NOTE: This should be inside an 'if' Statement controlled by the 'diceReady' boolean, to ensure that the dice can only be rolled once per turn. The boolean is reactivated by a signal from the server after each turn is finshed.
-					System.out.print(ROLL_DICE);
-					int diceRoll = input.nextInt(); 
-					  
-					// Tell the user what the roll was
-					System.out.print("You rolled: " + diceRoll);
-					  
-					// Send the diceroll to the server
-					osToServer.writeInt(diceRoll);
-					  
-					// Lock the dice until next round
-					diceReady = false;//NOTE: This boolean must be accessed by the Server to turn true, and start the next round.
-					// And here the 'if' statement with the rolling dice part of the game should be closed off
-					  
-					// flushes all the streams of data and executes them completely 
-					// and gives a new space to new streams 
-					osToServer.flush();
-					  
-					// Get updated score from server
-					double clientScore = isFromServer.readInt();//Jens: I think this should be an int, not a double. Also, I think the variable should be made in the top, not here. I have it as playerScore. 
-					// int clientScore = isFromServer.readInt();//Like this.
-					  
-					// print out score
-					System.out.println("Your new score is: " + clientScore);
-					  
-					// GAME END CODE START
-					// This part of the code is for when any player wins a game. NOTE: The 2 booleans (gameEnd & winCondition) is supposed to change from the server. gameEnd affects all players, and winCondition affects only the winner
-					// NOTE: When the 2 booleans are sent from the Server, send the "winCondition" first, to ensure that the messages don't get mixed up.
-					// If the game ends, and you are not the winner
-					if (gameEnd == true && winCondition == true) {
-						
-						System.out.println(GAME_OVER_WON);//we tell that the game is over, and the player won
-						//gameResetQuestion();//We run the part that ask if player wants a new game.
-					} else if (gameEnd == true && winCondition == false) { //If the game ends, and you are not the winner
-						
-						System.out.println(GAME_OVER_LOSE);//we tell that the game is over, and the player did not win
-						//gameResetQuestion();//We run the part that ask if player wants a new game.
-					}
-					//GAME END CODE END
-				 
-				} input.close();
-				connectToServer.close();
-				  
-			} catch (IOException ex) {
-				System.out.println(ex.toString() + '\n');
-			}
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+import java.util.concurrent.Semaphore;
+
+public class BoardGameClient implements Serializable {
+
+	private int playerCount;
+	private static final long serialVersionUID = -6224L;
+	public String name = "User";
+	private transient Socket socket;
+	static DataInputStream in;
+	static DataOutputStream out;
+	public transient Scanner input = new Scanner(System.in);
+	public boolean gameStarted;
+	public boolean correctInput = false;
+
+	public static void main(String[] args) {
+
+		BoardGameClient c = new BoardGameClient();
+
+		try {
+
+			c.joinServer();
+
+		} catch (ClassNotFoundException | IOException e) {
+
+			System.out.println("Failed to join server.");
+			e.printStackTrace();
 		}
 	}
-			
+
+	public void joinServer() throws UnknownHostException, IOException, ClassNotFoundException {
+
+		try {
+			socket = new Socket("localhost", 4445);
+			DataOutputStream objectOutputStream = new DataOutputStream(socket.getOutputStream());
+			DataInputStream objectInputStream = new DataInputStream(socket.getInputStream());
+			System.out.println("Trying to establish connection...");
+			while (true) {
+				System.out.println("You have connected to the Lobby");
+				System.out
+						.println("Please wait for more players... Missing " + objectInputStream.readInt() + " players");
+				BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
+
+				System.out.println(objectInputStream.readUTF());
+				System.out.println(objectInputStream.readUTF());
+				System.out.println(objectInputStream.readUTF());
+
+				int ready = input.nextInt();
+				objectOutputStream.writeInt(ready);
+
+				System.out.println(objectInputStream.readUTF());
+				System.out.println(objectInputStream.readUTF());
+
+				// Receive a boolean so the client stays inside the game while loop
+				gameStarted = objectInputStream.readBoolean();
+
+				// IF THE GAME HAS STARTED
+				while (gameStarted) {
+					// Receive instructions to roll the dice
+					System.out.println(objectInputStream.readUTF());
+
+					// Receive 'r' from clients input and send it to the lobby
+					String roll = input.next();
+					objectOutputStream.writeChars(roll);
+
+					// Receive info what each player rolled
+					for (int i = 0; i < 4; i++) {
+						System.out.println(objectInputStream.readUTF());
+					}
+
+					// If no one else had max
+					if (objectInputStream.readBoolean() == true) {
+						// Receive info of who rolled the highest value
+						System.out.println(objectInputStream.readUTF());
+
+						// Receive info of scoring list
+						for (int i = 0; i < 5; i++) {
+							System.out.println(objectInputStream.readUTF());
+						}
+
+						// Else if someone else has max
+					} else {
+						System.out.println(objectInputStream.readUTF());
+						// Receive info of scoring list
+						for (int i = 0; i < 5; i++) {
+							System.out.println(objectInputStream.readUTF());
+						}
+					}
+					// if last player has the max value
+					if (objectInputStream.readBoolean() == true) {
+						// Receive info of who rolled the highest value
+						System.out.println(objectInputStream.readUTF());
+
+						// Receive info of scoring list
+						for (int i = 0; i < 5; i++) {
+							System.out.println(objectInputStream.readUTF());
+						}
+
+					} else {
+
+					}
+
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+	}
+}
