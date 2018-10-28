@@ -6,7 +6,7 @@ Aalborg University Medialogy Group 3 Semester 3 2018 <br /> Dice Racing Digital 
 
 Welcome to the 2018 Medialogy 3 Group 3 Dice Racing Digital Board game! <br />
 Built in Java for the AAU Medialogy Programming MiniProject.
-This game is run in the consol of the environment of which the files are opened.
+This game is run in the console of the environment of which the files are opened.
 
 ------
 
@@ -31,13 +31,13 @@ The rules are simple:
 
 Installation guide:
 
-0: Download (name of file / repository) from botht the Client and Server repository, and save to a directory of your choice.
+0: Download (name of file / repository) from both the Client and Server repository, and save to a directory of your choice.
 
 1: Run the file "MainServer".
 
 2: Run the file "Lobby".
 
-3: Each Player have to run the file "BoardGameClient".
+3: Each Player has to run the file "BoardGameClient".
 
 4: Players Connect to the Server Lobby.
 
